@@ -140,17 +140,12 @@ app.get('/', (_req: Request, res: Response) => {
 // Health check
 app.get('/api/v1/health', async (_req: Request, res: Response) => {
   try {
-    await prisma.$runCommandRaw({ ping: 1 })
+    await prisma.$queryRaw`SELECT 1`
     res.status(200).json({
       success: true,
       message: 'Server is healthy',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
-      environment: config.env,
-      memory: {
-        used: `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`,
-        total: `${Math.round(process.memoryUsage().heapTotal / 1024 / 1024)}MB`,
-      },
       database: 'connected',
     })
   } catch {
@@ -161,7 +156,6 @@ app.get('/api/v1/health', async (_req: Request, res: Response) => {
     })
   }
 })
-
 // API routes
 app.use('/api/v1', router)
 
