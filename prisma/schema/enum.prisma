@@ -5,8 +5,6 @@ enum OtpPurpose {
 
 enum Role {
     USER
-    BRAND
-    PRACTITIONER
     ADMIN
     SUPER_ADMIN
 }

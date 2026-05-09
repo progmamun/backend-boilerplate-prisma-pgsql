@@ -3,6 +3,7 @@ import auth from '../../middlewares/auth'
 import { RequestValidation } from '../../middlewares/validateRequest'
 import { AuthValidation } from './auth.validation'
 import { AuthController } from './auth.controller'
+import { Role } from '../../../generated/enums'
 
 const router = express.Router()
 
@@ -58,19 +59,19 @@ router.post(
 // Protected routes
 router.post(
   '/logout',
-  auth('USER', 'ADMIN', 'SUPER_ADMIN', 'BRAND', 'PRACTITIONER'),
+  auth(Role.USER, Role.SUPER_ADMIN, Role.ADMIN),
   AuthController.logout
 )
 
 router.get(
   '/me',
-  auth('USER', 'ADMIN', 'SUPER_ADMIN', 'BRAND', 'PRACTITIONER'),
+  auth(Role.USER, Role.SUPER_ADMIN, Role.ADMIN),
   AuthController.getMe
 )
 
 router.post(
   '/change-password',
-  auth('USER', 'ADMIN', 'SUPER_ADMIN', 'BRAND', 'PRACTITIONER'),
+  auth(Role.USER, Role.SUPER_ADMIN, Role.ADMIN),
   RequestValidation.validateRequest(AuthValidation.changePasswordZodSchema),
   AuthController.changePassword
 )

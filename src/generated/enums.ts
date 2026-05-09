@@ -19,8 +19,6 @@ export type OtpPurpose = (typeof OtpPurpose)[keyof typeof OtpPurpose]
 
 export const Role = {
   USER: 'USER',
-  BRAND: 'BRAND',
-  PRACTITIONER: 'PRACTITIONER',
   ADMIN: 'ADMIN',
   SUPER_ADMIN: 'SUPER_ADMIN'
 } as const
