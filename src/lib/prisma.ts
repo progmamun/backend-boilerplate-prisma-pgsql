@@ -1,12 +1,11 @@
-import "dotenv/config";
-import { PrismaPg } from "@prisma/adapter-pg";
-import config from "../config";
-// import { PrismaClient } from "../../generated/prisma/client";
-import { PrismaClient } from "../generated/client";
+import 'dotenv/config'
+import { PrismaPg } from '@prisma/adapter-pg'
+import { PrismaClient } from '../generated/client'
+import config from '../app/config'
 
-const connectionString = config.app.databaseUrl;
+const connectionString = config.app.databaseUrl
 
-const adapter = new PrismaPg({ connectionString });
-const prisma = new PrismaClient({ adapter });
+const adapter = new PrismaPg({ connectionString })
+const prisma = new PrismaClient({ adapter })
 
-export { prisma };
+export { prisma }
