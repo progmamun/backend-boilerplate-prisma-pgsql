@@ -1,0 +1,19 @@
+enum OtpPurpose {
+    EMAIL_VERIFICATION
+    PASSWORD_RESET
+}
+
+enum Role {
+    USER
+    BRAND
+    PRACTITIONER
+    ADMIN
+    SUPER_ADMIN
+}
+
+enum PaymentStatus {
+    PENDING
+    SUCCEEDED
+    FAILED
+    CANCELLED
+}

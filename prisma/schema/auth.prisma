@@ -1,0 +1,49 @@
+model User {
+    id               String         @id @default(uuid())
+    email            String         @unique
+    password         String
+    name             String?
+    phone            String?
+    role             Role           @default(USER)
+    isEmailVerified  Boolean        @default(false)
+    isActive         Boolean        @default(true)
+    totalRefers      Int            @default(0)
+    lastLogin        DateTime?
+    isDeleted        Boolean        @default(false)
+    stripeAccountId  String?
+    stripeCustomerId String?
+    paymentMethodId  String?
+    createdAt        DateTime       @default(now())
+    updatedAt        DateTime       @updatedAt
+    // relations
+    otpTokens        OtpToken[]
+    refreshTokens    RefreshToken[]
+
+    @@map("user")
+}
+
+model OtpToken {
+    id        String     @id @default(uuid())
+    userId    String
+    otp       String
+    purpose   OtpPurpose
+    expiresAt DateTime
+    used      Boolean    @default(false)
+    createdAt DateTime   @default(now())
+    //relation
+    user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
+}
+
+model RefreshToken {
+    id        String   @id @default(uuid())
+    userId    String
+    token     String   @unique
+    expiresAt DateTime
+    createdAt DateTime @default(now())
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
+}
