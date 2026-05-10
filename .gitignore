@@ -29,7 +29,7 @@ Thumbs.db
 coverage/
 
 # Prisma
-/generated/prisma
+src/generated
 
 # TypeScript
 *.tsbuildinfo
