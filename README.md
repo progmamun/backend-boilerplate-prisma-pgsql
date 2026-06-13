@@ -695,4 +695,3 @@ If you want to extend quickly, start by cloning the Auth module pattern and keep
 - `validation -> controller -> service -> prisma`
 
 This keeps the codebase predictable and easy to maintain for teams.
-# backend-boilerplate-sm-tech
