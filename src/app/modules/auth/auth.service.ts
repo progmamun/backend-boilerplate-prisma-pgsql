@@ -15,13 +15,11 @@ import { OtpPurpose, Role } from '../../../generated/enums'
 import { Prisma } from '../../../generated/client'
 import { blacklistToken, isTokenBlacklisted } from '../../../lib/redis'
 import { generateOTP } from '../../utils/generateOtp'
-import emailSender from '../../helpers/email_sender/emailSender'
-import { otpEmail } from '../../shared/emails/otpEmail'
-import { passwordResetEmail } from '../../shared/emails/passwordResetEmail'
 import ApiError from '../../errors/apiError'
 import { compareItem, hashItem } from '../../utils/hashAndCompareItem'
 import { ITokenPayload, jwtHelpers } from '../../utils/jwtHelpers'
 import config from '../../config'
+import { sendEmail } from '../../utils/email'
 
 const OTP_EXPIRY_MINUTES = 10
 
@@ -53,46 +51,30 @@ const createAndSendOtp = async (
   })
 
   if (purpose === OtpPurpose.EMAIL_VERIFICATION) {
-    await emailSender('Email Verification OTP', email, otpEmail(otp))
+    await sendEmail({
+      to: email,
+      subject: 'Email Verification OTP',
+      templateName: 'otp-verification',
+      templateData: { otp },
+    })
   } else {
-    await emailSender('Password Reset OTP', email, passwordResetEmail(otp))
+    await sendEmail({
+      to: email,
+      subject: 'Password Reset OTP',
+      templateName: 'password-reset',
+      templateData: { otp },
+    })
   }
 }
 
 // Service methods
 const register = async (userData: IUser) => {
-  const { email, name, password, role, phone, code } = userData
+  const { email, name, password, role, phone } = userData
 
   // Check if email already exists
   const existing = await prisma.user.findUnique({ where: { email } })
   if (existing) {
     throw new ApiError(httpStatus.CONFLICT, 'Email is already registered.')
-  }
-
-  let referrerId: string | null = null
-
-  // Validate and process referral code (only for USER role)
-  if (code) {
-    const refer = await prisma.refer.findUnique({
-      where: { code },
-    })
-
-    if (!refer) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid referral code.')
-    }
-
-    if (!refer.isActive) {
-      throw new ApiError(
-        httpStatus.BAD_REQUEST,
-        'This referral code is not active.'
-      )
-    }
-
-    if (refer.userId === null) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid referral code.')
-    }
-
-    referrerId = refer.userId
   }
 
   const hashedPassword = await hashItem(password)
@@ -117,26 +99,6 @@ const register = async (userData: IUser) => {
       phone: true,
     },
   })
-
-  if (code && referrerId) {
-    await prisma.$transaction(async tx => {
-      // Update refer totalUses
-      await tx.refer.update({
-        where: { code },
-        data: {
-          totalUses: { increment: 1 },
-        },
-      })
-
-      // Give credit to the referrer
-      await tx.user.update({
-        where: { id: referrerId! },
-        data: {
-          totalRefers: { increment: 1 },
-        },
-      })
-    })
-  }
 
   // Send OTP for email verification
   await createAndSendOtp(user.email, OtpPurpose.EMAIL_VERIFICATION, user.id)
@@ -431,9 +393,6 @@ const getMe = async (id: string) => {
       isActive: true,
       lastLogin: true,
       createdAt: true,
-      patientDetails: true,
-      practitionerDetails: true,
-      brandDetails: true,
     },
   })
 

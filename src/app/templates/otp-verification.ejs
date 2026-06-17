@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Verification</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background-color: #f4f6f9;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+      }
+      .wrapper {
+        max-width: 600px;
+        margin: 40px auto;
+        background: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      }
+      .header {
+        background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+        padding: 40px 48px;
+        text-align: center;
+      }
+      .header h1 {
+        color: #ffffff;
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+      .header p {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 14px;
+        margin-top: 6px;
+      }
+      .body {
+        padding: 48px;
+      }
+      .body p {
+        font-size: 15px;
+        line-height: 1.7;
+        color: #444;
+        margin-bottom: 12px;
+      }
+      .otp-box {
+        margin: 32px 0;
+        text-align: center;
+        background: #f0f4ff;
+        border: 2px dashed #1a73e8;
+        border-radius: 10px;
+        padding: 28px;
+      }
+      .otp-label {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #1a73e8;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+      .otp-code {
+        font-size: 42px;
+        font-weight: 700;
+        letter-spacing: 12px;
+        color: #0d47a1;
+        font-family: 'Courier New', Courier, monospace;
+      }
+      .notice {
+        background: #fffbea;
+        border-left: 4px solid #f5a623;
+        border-radius: 4px;
+        padding: 14px 18px;
+        margin: 24px 0;
+        font-size: 13px;
+        color: #7a5c00;
+        line-height: 1.6;
+      }
+      .footer {
+        background: #f9fafb;
+        border-top: 1px solid #e8eaed;
+        padding: 28px 48px;
+        text-align: center;
+      }
+      .footer p {
+        font-size: 12px;
+        color: #9aa0a6;
+        line-height: 1.8;
+      }
+      .footer a {
+        color: #1a73e8;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="header">
+        <h1>Email Verification</h1>
+        <p>Verify your identity to continue</p>
+      </div>
+
+      <div class="body">
+        <p>Hello,</p>
+        <p>
+          Thank you for registering. To complete your email verification, please
+          use the one-time password (OTP) below:
+        </p>
+
+        <div class="otp-box">
+          <div class="otp-label">Your Verification Code</div>
+          <div class="otp-code"><%= otp %></div>
+        </div>
+
+        <div class="notice">
+          ⏱ This code is valid for <strong>10 minutes</strong>. Do not share it
+          with anyone — our team will never ask for this code.
+        </div>
+
+        <p>
+          If you did not create an account or request this code, you can safely
+          ignore this email. No action is required.
+        </p>
+
+        <p style="margin-top: 24px">
+          Best regards,<br />
+          <strong>Support Team</strong>
+        </p>
+      </div>
+
+      <div class="footer">
+        <p>
+          This is an automated message. Please do not reply to this email.<br />
+          If you need help, contact us at
+          <a href="mailto:support@namethatrapper.com"
+            >support@namethatrapper.com</a
+          >
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

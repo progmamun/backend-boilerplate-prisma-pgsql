@@ -12,10 +12,15 @@ import notFound from './app/middlewares/notFound'
 import config from './app/config'
 import { logger } from './app/utils/logger/logger'
 import qs from 'qs'
+import path from 'path'
+import { uploadDir } from './app/config/upload.config'
 
 // Initialize app
 const app: Application = express()
 app.set('query parser', (str: string) => qs.parse(str))
+
+app.set('view engine', 'ejs')
+app.set('views', path.resolve(process.cwd(), `src/app/templates`))
 
 // Security Middlewares
 app.use(helmet())
@@ -54,7 +59,14 @@ app.use(
   })
 )
 app.use(express.urlencoded({ extended: true, limit: '10mb' }))
-app.use(express.static('public'))
+app.use(
+  '/public',
+  express.static(uploadDir, {
+    setHeaders: res => {
+      res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
+    },
+  })
+)
 
 // Rate Limiting
 

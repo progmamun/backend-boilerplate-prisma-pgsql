@@ -46,6 +46,9 @@ const config = {
   emailSender: {
     email: process.env.EMAIL_SENDER_EMAIL || '',
     app_pass: process.env.EMAIL_SENDER_APP_PASS || '',
+    smtp_host: process.env.EMAIL_SENDER_SMTP_HOST || '',
+    smtp_port: process.env.EMAIL_SENDER_SMTP_PORT || '',
+    smtp_from: process.env.EMAIL_SENDER_SMTP_FROM || '',
   },
   cors: {
     origin: process.env.CORS_ORIGIN || '*',
