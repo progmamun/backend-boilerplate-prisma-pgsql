@@ -16,6 +16,7 @@ npm-debug.log*
 
 # Uploads
 uploads/
+public/
 
 # OS files
 .DS_Store
