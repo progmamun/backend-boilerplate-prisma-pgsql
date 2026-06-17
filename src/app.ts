@@ -7,13 +7,13 @@ import responseTime from 'response-time'
 import router from './app/routes'
 import { prisma } from './lib/prisma'
 import { globalErrorHandler } from './app/middlewares/globalErrorHandler'
-import { LogsRoutes } from './app/modules/logs/logs.routes'
 import notFound from './app/middlewares/notFound'
 import config from './app/config'
 import { logger } from './app/utils/logger/logger'
 import qs from 'qs'
 import path from 'path'
 import { uploadDir } from './app/config/upload.config'
+import { LogsRoutes } from './app/modules/logger/logs.routes'
 
 // Initialize app
 const app: Application = express()
