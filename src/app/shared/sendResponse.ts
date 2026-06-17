@@ -1,32 +1,28 @@
 import { Response } from 'express'
 
-const sendResponse = <T>(
-  res: Response,
-  jsonData: {
-    statusCode: number
-    success: boolean
-    message: string
-    meta?: {
-      page: number
-      limit: number
-      total: number
-    }
-    data?: T | null
+interface IResponseData<T> {
+  httpStatusCode: number
+  success: boolean
+  message: string
+  data?: T
+  meta?: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
   }
-) => {
-  const responseBody: Record<string, unknown> = {
-    success: jsonData.success,
-    message: jsonData.message,
-  }
-
-  if (jsonData.meta !== undefined) {
-    responseBody.meta = jsonData.meta
-  }
-
-  // Preserve falsy values (0, false, "") — only exclude undefined
-  responseBody.data = jsonData.data !== undefined ? jsonData.data : null
-
-  res.status(jsonData.statusCode).json(responseBody)
 }
 
-export default sendResponse
+export const sendResponse = <T>(
+  res: Response,
+  responseData: IResponseData<T>
+) => {
+  const { httpStatusCode, success, message, data, meta } = responseData
+
+  res.status(httpStatusCode).json({
+    success,
+    message,
+    data,
+    meta,
+  })
+}

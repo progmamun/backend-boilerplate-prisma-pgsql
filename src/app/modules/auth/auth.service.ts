@@ -17,7 +17,7 @@ import { blacklistToken, isTokenBlacklisted } from '../../../lib/redis'
 import { generateOTP } from '../../utils/generateOtp'
 import ApiError from '../../errors/apiError'
 import { compareItem, hashItem } from '../../utils/hashAndCompareItem'
-import { ITokenPayload, jwtHelpers } from '../../utils/jwtHelpers'
+import { ITokenPayload, jwtHelpers } from '../../helpers/jwtHelpers'
 import config from '../../config'
 import { sendEmail } from '../../utils/email'
 

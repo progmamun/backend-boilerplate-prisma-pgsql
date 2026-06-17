@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 import { prisma } from '../../lib/prisma'
 import { isTokenBlacklisted } from '../../lib/redis'
 import ApiError from '../errors/apiError'
-import { jwtHelpers } from '../utils/jwtHelpers'
+import { jwtHelpers } from '../helpers/jwtHelpers'
 import config from '../config'
 
 const auth = (...roles: string[]) => {
