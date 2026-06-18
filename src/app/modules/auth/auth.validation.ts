@@ -3,14 +3,14 @@ import { z } from 'zod'
 const createUserZodSchema = z.object({
   body: z.object({
     name: z.string().min(1, 'Name is required'),
-    email: z.email('Email is required'),
+    email: z.email('Email is required').trim().toLowerCase(),
     password: z.string().min(6, 'Password must be at least 6 characters long'),
   }),
 })
 
 const loginZodSchema = z.object({
   body: z.object({
-    email: z.email('Email is required'),
+    email: z.email('Email is required').trim().toLowerCase(),
     password: z.string().min(1, 'Password is required'),
   }),
 })
@@ -23,14 +23,15 @@ const refreshTokenZodSchema = z.object({
 
 const forgotPasswordZodSchema = z.object({
   body: z.object({
-    email: z.email('Email is required'),
+    email: z.email('Email is required').trim().toLowerCase(),
   }),
 })
 
 const verifyOtpZodSchema = z.object({
   body: z.object({
-    email: z.email('Email is required'),
-    otp: z.string().length(6, 'OTP must be exactly 6 digits'),
+    email: z.email('Email is required').trim().toLowerCase(),
+    otp: z.string().trim().length(6, 'OTP must be exactly 6 digits'),
+    purpose: z.enum(['EMAIL_VERIFICATION', 'PASSWORD_RESET']),
   }),
 })
 
@@ -45,14 +46,14 @@ const resetPasswordZodSchema = z.object({
 
 const verifyEmailZodSchema = z.object({
   body: z.object({
-    email: z.email('Email is required'),
-    otp: z.string().length(6, 'OTP must be exactly 6 digits'),
+    email: z.email('Email is required').trim().toLowerCase(),
+    otp: z.string().trim().length(6, 'OTP must be exactly 6 digits'),
   }),
 })
 
 const resendOtpZodSchema = z.object({
   body: z.object({
-    email: z.email('Email is required'),
+    email: z.email('Email is required').trim().toLowerCase(),
     purpose: z.enum(['EMAIL_VERIFICATION', 'PASSWORD_RESET']),
   }),
 })

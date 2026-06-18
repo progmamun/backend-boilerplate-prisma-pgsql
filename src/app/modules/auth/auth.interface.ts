@@ -23,6 +23,7 @@ export interface IForgotPasswordInput {
 export interface IVerifyOtpInput {
   email: string
   otp: string
+  purpose: 'EMAIL_VERIFICATION' | 'PASSWORD_RESET'
 }
 
 export interface IResetPasswordInput {

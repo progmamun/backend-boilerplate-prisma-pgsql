@@ -23,6 +23,9 @@ import { sendEmail } from '../../utils/email'
 
 const OTP_EXPIRY_MINUTES = 10
 
+const normalizeEmail = (email: string) => email.trim().toLowerCase()
+const normalizeOtp = (otp: string) => otp.trim()
+
 // Helpers
 const saveRefreshToken = async (userId: string, token: string) => {
   const expiresAt = new Date()
@@ -70,9 +73,12 @@ const createAndSendOtp = async (
 // Service methods
 const register = async (userData: IUser) => {
   const { email, name, password, role, phone } = userData
+  const normalizedEmail = normalizeEmail(email)
 
   // Check if email already exists
-  const existing = await prisma.user.findUnique({ where: { email } })
+  const existing = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+  })
   if (existing) {
     throw new ApiError(httpStatus.CONFLICT, 'Email is already registered.')
   }
@@ -80,7 +86,7 @@ const register = async (userData: IUser) => {
   const hashedPassword = await hashItem(password)
 
   const userCreateData: Prisma.UserCreateInput = {
-    email,
+    email: normalizedEmail,
     name,
     password: hashedPassword,
     role: role as Role,
@@ -107,8 +113,9 @@ const register = async (userData: IUser) => {
 }
 
 const login = async (loginData: ILoginInput) => {
+  const email = normalizeEmail(loginData.email)
   const user = await prisma.user.findUnique({
-    where: { email: loginData.email },
+    where: { email },
   })
 
   if (!user) {
@@ -238,7 +245,9 @@ const logout = async (accessToken: string, refreshToken?: string) => {
 }
 
 const verifyEmail = async ({ email, otp }: IVerifyEmailInput) => {
-  const user = await prisma.user.findUnique({ where: { email } })
+  const normalizedEmail = normalizeEmail(email)
+  const normalizedOtp = normalizeOtp(otp)
+  const user = await prisma.user.findUnique({ where: { email: normalizedEmail } })
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found.')
   }
@@ -249,7 +258,7 @@ const verifyEmail = async ({ email, otp }: IVerifyEmailInput) => {
   const otpRecord = await prisma.otpToken.findFirst({
     where: {
       userId: user.id,
-      otp,
+      otp: normalizedOtp,
       purpose: OtpPurpose.EMAIL_VERIFICATION,
       used: false,
       expiresAt: { gt: new Date() },
@@ -273,7 +282,8 @@ const verifyEmail = async ({ email, otp }: IVerifyEmailInput) => {
 }
 
 const resendOtp = async ({ email, purpose }: IResendOtpInput) => {
-  const user = await prisma.user.findUnique({ where: { email } })
+  const normalizedEmail = normalizeEmail(email)
+  const user = await prisma.user.findUnique({ where: { email: normalizedEmail } })
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found.')
   }
@@ -282,19 +292,22 @@ const resendOtp = async ({ email, purpose }: IResendOtpInput) => {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email is already verified.')
   }
 
-  await createAndSendOtp(email, purpose as OtpPurpose, user.id)
+  await createAndSendOtp(normalizedEmail, purpose as OtpPurpose, user.id)
 }
 
 const forgotPassword = async ({ email }: IForgotPasswordInput) => {
-  const user = await prisma.user.findUnique({ where: { email } })
+  const normalizedEmail = normalizeEmail(email)
+  const user = await prisma.user.findUnique({ where: { email: normalizedEmail } })
   // Return success even if user not found (security: don't confirm email existence)
   if (!user) return
 
-  await createAndSendOtp(email, OtpPurpose.PASSWORD_RESET, user.id)
+  await createAndSendOtp(normalizedEmail, OtpPurpose.PASSWORD_RESET, user.id)
 }
 
-const verifyOtp = async ({ email, otp }: IVerifyOtpInput) => {
-  const user = await prisma.user.findUnique({ where: { email } })
+const verifyOtp = async ({ email, otp, purpose }: IVerifyOtpInput) => {
+  const normalizedEmail = normalizeEmail(email)
+  const normalizedOtp = normalizeOtp(otp)
+  const user = await prisma.user.findUnique({ where: { email: normalizedEmail } })
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found.')
   }
@@ -302,8 +315,8 @@ const verifyOtp = async ({ email, otp }: IVerifyOtpInput) => {
   const otpRecord = await prisma.otpToken.findFirst({
     where: {
       userId: user.id,
-      otp,
-      purpose: OtpPurpose.PASSWORD_RESET,
+      otp: normalizedOtp,
+      purpose: purpose as OtpPurpose,
       used: false,
       expiresAt: { gt: new Date() },
     },
