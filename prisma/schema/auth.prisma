@@ -4,6 +4,7 @@ model User {
     password        String
     name            String?
     phone           String?
+    image           String?
     role            Role      @default(USER)
     isEmailVerified Boolean   @default(false)
     isActive        Boolean   @default(true)
