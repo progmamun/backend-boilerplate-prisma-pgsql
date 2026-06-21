@@ -247,7 +247,9 @@ const logout = async (accessToken: string, refreshToken?: string) => {
 const verifyEmail = async ({ email, otp }: IVerifyEmailInput) => {
   const normalizedEmail = normalizeEmail(email)
   const normalizedOtp = normalizeOtp(otp)
-  const user = await prisma.user.findUnique({ where: { email: normalizedEmail } })
+  const user = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+  })
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found.')
   }
@@ -283,7 +285,9 @@ const verifyEmail = async ({ email, otp }: IVerifyEmailInput) => {
 
 const resendOtp = async ({ email, purpose }: IResendOtpInput) => {
   const normalizedEmail = normalizeEmail(email)
-  const user = await prisma.user.findUnique({ where: { email: normalizedEmail } })
+  const user = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+  })
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found.')
   }
@@ -297,7 +301,9 @@ const resendOtp = async ({ email, purpose }: IResendOtpInput) => {
 
 const forgotPassword = async ({ email }: IForgotPasswordInput) => {
   const normalizedEmail = normalizeEmail(email)
-  const user = await prisma.user.findUnique({ where: { email: normalizedEmail } })
+  const user = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+  })
   // Return success even if user not found (security: don't confirm email existence)
   if (!user) return
 
@@ -307,7 +313,9 @@ const forgotPassword = async ({ email }: IForgotPasswordInput) => {
 const verifyOtp = async ({ email, otp, purpose }: IVerifyOtpInput) => {
   const normalizedEmail = normalizeEmail(email)
   const normalizedOtp = normalizeOtp(otp)
-  const user = await prisma.user.findUnique({ where: { email: normalizedEmail } })
+  const user = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+  })
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found.')
   }
@@ -337,7 +345,26 @@ const verifyOtp = async ({ email, otp, purpose }: IVerifyOtpInput) => {
     '10m'
   )
 
-  return { resetToken }
+  if (purpose === OtpPurpose.PASSWORD_RESET) {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { resetPasswordToken: resetToken },
+    })
+  }
+
+  if (purpose === OtpPurpose.EMAIL_VERIFICATION) {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { isEmailVerified: true },
+    })
+  }
+
+  const data =
+    purpose === OtpPurpose.EMAIL_VERIFICATION
+      ? { token: user.email, message: 'Email verified successfully' }
+      : { token: resetToken, message: 'Reset token generated successfully' }
+
+  return data
 }
 
 const resetPassword = async ({

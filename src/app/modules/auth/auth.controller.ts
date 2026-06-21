@@ -83,7 +83,7 @@ const verifyOtp = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     httpStatusCode: httpStatus.OK,
-    message: 'OTP verified successfully. You can now reset your password.',
+    message: result.message,
     data: result,
   })
 })

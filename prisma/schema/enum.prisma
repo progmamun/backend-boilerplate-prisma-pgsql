@@ -8,10 +8,3 @@ enum Role {
     ADMIN
     SUPER_ADMIN
 }
-
-enum PaymentStatus {
-    PENDING
-    SUCCEEDED
-    FAILED
-    CANCELLED
-}
